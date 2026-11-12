@@ -2,4 +2,7 @@
 2- It should have database creation statement, then other things in order of section 4
 3- The file should run from top to down without errors
 4- Above every function,view,procedure there should be a student name & ID
-5- 
+5- Review the 4 bullets under "Data types and naming" in page 2.
+6- We should figure out input values on our own, they are not stated.
+7- Return appropriate error code as mentioned in section 2.4.
+8- Review the 4 bullets under "Implementation rules" in page 2.
