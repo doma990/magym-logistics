@@ -997,7 +997,7 @@ RETURN
     SELECT z.zone_id, z.zone_name,
     (SELECT COUNT(*) FROM dbo.Orders AS o
      WHERE o.zone_id = z.zone_id AND o.status <> 'Cancelled'
-       AND CAST(o.order_date AS date) BETWEEN @from_date AND @to_date) AS number_of_orders,
+     AND CAST(o.order_date AS date) BETWEEN @from_date AND @to_date) AS number_of_orders,
     CAST((SELECT AVG(o.total_amount) FROM dbo.Orders AS o
           WHERE o.zone_id = z.zone_id AND o.status <> 'Cancelled'
         AND CAST(o.order_date AS date) BETWEEN @from_date AND @to_date)
@@ -1015,10 +1015,7 @@ RETURN
 GO
 
 -- mohamed mostafa hassan mohamed - 65-33784
-CREATE FUNCTION dbo.Daily_Revenue_Report
-(
-    @report_date date
-)
+CREATE FUNCTION dbo.Daily_Revenue_Report (@report_date date)
 RETURNS TABLE
 AS
 RETURN
