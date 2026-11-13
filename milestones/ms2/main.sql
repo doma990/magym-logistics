@@ -1,7 +1,9 @@
+-- 4.1.a - LocalDeliveryMarketplace_Team_44
 CREATE DATABASE LocalDeliveryMarketplace_Team_44;
 GO
 USE LocalDeliveryMarketplace_Team_44;
 GO
+-- 4.1.b - createAllTables
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE PROCEDURE dbo.createAllTables
 AS
@@ -309,6 +311,7 @@ GO
 EXEC dbo.createAllTables;
 GO
 
+-- 4.1.c - dropAllTables
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE PROCEDURE dbo.dropAllTables
 AS
@@ -356,6 +359,7 @@ BEGIN
 END;
 GO
 
+-- 4.1.d - dropAllProceduresFunctionsViews
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE PROCEDURE dbo.dropAllProceduresFunctionsViews
 AS
@@ -384,6 +388,7 @@ BEGIN
 END;
 GO
 
+-- 4.1.e - clearAllTables
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE PROCEDURE dbo.clearAllTables
 AS
@@ -415,6 +420,9 @@ BEGIN
 END;
 GO
 
+-- 4.2.a - allBusinessProfiles (placeholder)
+
+-- 4.2.b - BusinessesPerZone
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE VIEW dbo.BusinessesPerZone
 AS
@@ -423,6 +431,78 @@ FROM dbo.Zone z
 LEFT JOIN dbo.Business b ON b.zone_id = z.zone_id AND b.status = 'Active'
 GROUP BY z.zone_id, z.zone_name;
 GO
+
+-- 4.2.c - BusinessRatingsSummary
+--Maryam Mustafa Abdelwahab- 64-3003
+GO
+CREATE VIEW dbo.BusinessRatingsSummary
+AS
+SELECT b.business_id, b.name AS business_name,
+CAST(AVG(CAST(f.rating AS decimal(10,2))) AS decimal(10,2)) AS avg_rating, COUNT(f.feedback_id) as 
+ratings_count
+FROM dbo.Business b
+LEFT JOIN dbo.SubOrder AS s ON s.business_id = b.business_id
+LEFT JOIN dbo.Feedback AS f ON f.suborder_id = s.suborder_id
+GROUP BY b.business_id, b.name;
+GO
+
+-- 4.2.d - ActiveVouchers (placeholder)
+
+-- 4.2.e - PendingBusinessApprovals (placeholder)
+
+-- 4.2.f - RiderPerformanceSummary
+-- Maryam Mustafa Abdelwahab - 64-3003
+CREATE VIEW dbo.RiderPerformanceSummary
+AS 
+SELECT r.rider_id, u.first_name + ' ' + u.last_name AS rider_name,
+z.zone_name, COUNT(CASE WHEN s.status='Delievered' THEN 1 END) AS completed_deliveries,
+CAST(AVG(CAST(d.rider_rating AS decimal(10,2))) as decimal(10,2)) as average_rating
+FROM dbo.Rider r
+INNER JOIN dbo.Users as u ON u.user_id=r.rider_id
+INNER JOIN dbo.Zones AS z ON z.zone_id=r.zone_id
+LEFT JOIN dbo.Delivery AS d ON d.rider_id=r.rider_id
+LEFT JOIN dbo.SubOrder AS s ON s.suborder_id=d.suborder_id
+GROUP BY r.rider_id,u.first_name,u.last_name,zone_id;
+GO
+
+-- 4.2.g - TopSellingProducts (placeholder)
+
+-- 4.2.h - ZoneDeliveryPerformance
+-- Maryam Mustafa Abdelwahab - 64-3003
+CREATE VIEW dbo.ZoneDeliveryPerformance
+AS
+SELECT z.zone_id , z.zone_name , COUNT(dd.delivery_id) AS delivery_count,
+CAST(AVG(CAST(dd.tracking_time as decimal(10,2))) as decimal(10,2)) as avg_tracking_time
+FROM dbo.Zone z
+LEFT JOIN ( select o.zone_id , d.delivery_id , d.tracking_time FROM dbo.Orders AS o 
+INNER JOIN dbo.SubOrder AS s ON s.order_id=o.order_id
+INNER JOIN dbo.Delivery AS d ON d.suborder_id=s.suborder_id
+WHERE s.status='Delivered')
+AS  dd ON dd.zone_id=z.zone_id
+GROUP BY z.zone_id,z.zone_name;
+GO
+
+-- 4.3.a - Customer_Register (placeholder)
+
+-- 4.3.b - Partner_Register (placeholder)
+
+-- 4.3.c - Rider_Register (placeholder)
+
+-- 4.3.d - CustomerLoginValidation (placeholder)
+
+-- 4.3.e - PartnerLoginValidation (placeholder)
+
+-- 4.3.f - RiderLoginValidation (placeholder)
+
+-- 4.3.g - AdminLoginValidation (placeholder)
+
+-- 4.3.h - Change_Password (placeholder)
+
+-- 4.4.a - Create_Admin (placeholder)
+
+-- 4.4.b - Approve_Business (placeholder)
+
+-- 4.4.c - Reject_Business (placeholder)
 
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE FUNCTION dbo.BusinessRefunds(@business_id int)
@@ -443,6 +523,7 @@ WHERE s.business_id = @business_id AND s.status IN ('Placed', 'Assigned')
 );
 GO
 
+-- 4.4.d - Suspend_Business
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE PROCEDURE dbo.Suspend_Business
 @business_id int, @admin_id int, @reason varchar(255)
@@ -534,6 +615,7 @@ BEGIN
 END;
 GO
 
+-- 4.4.e - Reinstate_Business
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE PROCEDURE dbo.Reinstate_Business
 @business_id int, @super_admin_id int
@@ -557,6 +639,7 @@ BEGIN
 END;
 GO
 
+-- 4.4.f - Create_Zone
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE PROCEDURE dbo.Create_Zone
 @zone_name varchar(50), @delivery_fee decimal(10,2), @super_admin_id int
@@ -579,6 +662,7 @@ BEGIN
 END;
 GO
 
+-- 4.4.g - Update_Zone_Fee
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE PROCEDURE dbo.Update_Zone_Fee
 @zone_id int, @new_fee decimal(10,2), @super_admin_id int
@@ -598,6 +682,15 @@ BEGIN
 END;
 GO
 
+-- 4.4.h - Assign_Admin_Zone (placeholder)
+
+-- 4.4.i - Issue_Voucher (placeholder)
+
+-- 4.4.j - Blacklist_Customer (placeholder)
+
+-- 4.4.k - Lift_Customer_Blacklist (placeholder)
+
+-- 4.4.l - ZoneOrderReport
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE FUNCTION dbo.ZoneOrderReport(@zone_id int, @from_date date, @to_date date)
 RETURNS TABLE
@@ -620,6 +713,9 @@ RETURN
 );
 GO
 
+-- 4.4.m - TopRiders (placeholder)
+
+-- 4.4.n - Daily_Revenue_Report
 -- mohamed mostafa hassan mohamed - 65-33784
 CREATE FUNCTION dbo.Daily_Revenue_Report(@report_date date)
 RETURNS TABLE
@@ -652,3 +748,127 @@ RETURN
     GROUP BY z.zone_id, z.zone_name
 );
 GO
+
+-- 4.5.a - Register_Business (placeholder)
+
+-- 4.5.b - Update_Business_Info (placeholder)
+
+-- 4.5.c - Upsert_Product (placeholder)
+
+-- 4.5.d - Toggle_Product_Status (placeholder)
+
+-- 4.5.e - Set_Product_Promotion (placeholder)
+
+-- 4.5.f - BusinessSalesReport (placeholder)
+
+-- 4.5.g - BusinessFeedbackOverview (placeholder)
+
+-- 4.6.a - Add_Customer_Address (placeholder)
+
+-- 4.6.b - Update_Delete_Customer_Address (placeholder)
+
+-- 4.6.c - Change_Active_Address (placeholder)
+
+-- 4.6.d - Add_Card (placeholder)
+
+-- 4.6.e - Create_Cart (placeholder)
+
+-- 4.6.f - Add_To_Cart (placeholder)
+
+-- 4.6.g - Remove_From_Cart (placeholder)
+
+-- 4.6.h - Calculate_Voucher_Discount (placeholder)
+
+-- 4.6.i - Checkout_Cart (placeholder)
+
+-- 4.6.j - Cancel_Order (placeholder)
+
+-- 4.6.k - Reorder (placeholder)
+
+-- 4.6.l - Submit_Feedback (placeholder)
+
+-- 4.6.m - Rate_Rider (placeholder)
+
+-- 4.6.n - My_Order_History (placeholder)
+
+-- 4.6.o - Toggle_Favorite (placeholder)
+
+-- 4.6.p - My_Favorites (placeholder)
+
+-- 4.6.q - Recommended_Products (placeholder)
+
+-- 4.7.a - Set_Rider_Availability
+-- Maryam Mustafa AbdelWahab - 64-3003
+GO
+CREATE PROC dbo.Set_Rider_Availability
+@rider_id INT,
+@is_available BIT
+AS
+BEGIN 
+ IF @rider_id IS NULL OR @is_available IS NULL
+  RETURN -1;
+  IF NOT EXISTS (SELECT 1 FROM dbo.Rider WHERE rider_id = @rider_id)
+   RETURN -3;
+  BEGIN TRY
+        UPDATE dbo.Rider
+        SET is_available = @is_available
+        WHERE rider_id = @rider_id;
+        RETURN 0;
+  END TRY
+  BEGIN CATCH 
+  RETURN -1;
+  END CATCH;
+END;
+GO
+
+-- 4.7.b - My_Active_Deliveries
+-- Maryam Mustafa AbdelWahab - 64-3003 
+CREATE FUNCTION dbo.My_Active_Deliveries(@rider_int int)
+RETURNS TABLE
+AS
+RETURN ( SELECT d.delivery_id , s.order_id , s.suborder_id , b.name as business_name , 
+u.first_name + ' ' + u.last_name as customer_name , a.description AS address_description , 
+z.zone_name , s.status , d.assigned_at
+FROM dbo.Delivery d 
+
+INNER JOIN dbo.SubOrder AS s ON s.suborder_id=d.suborder_id
+INNER JOIN dbo.Business AS b on b.business_id=s.business_id
+INNER JOIN dbo.Orders AS o ON o.order_id=s.order_id
+INNER JOIN dbo.Zone AS z ON z.zone_id=o.zone_id
+INNER JOIN dbo.Cart AS  c ON c.Cart_id = o.cart_id
+INNER JOIN dbo.Address AS a ON a.address_id= c.address_id
+INNER JOIN dbo.UsersAS u ON u.user_id=c.customer_id
+WHERE d.rider_id=@rider_int AND s.status IN ('Assigned', 'Picked Up'));
+GO
+
+-- 4.7.c - Mark_Picked_Up (placeholder)
+
+-- 4.7.d - Mark_Delivered (placeholder)
+
+-- 4.7.e - My_Earnings (placeholder)
+
+-- 4.7.f - My_Rating_Summary (placeholder)
+
+-- 4.7.g - My_Delivery_History
+-- Maryam Mustafa Abdelwahab - 64-3003
+CREATE FUNCTION dbo.My_Delivery_History(@rider_id int , @from_date date , @to_date date)
+RETURNS TABLE
+AS
+RETURN 
+( SELECT d.Delivery_id , s.order_id , b.name AS business_name , s.status , d.assigned_at , 
+d.picked_up_at , d.delivered_at , d.tracking_time FROM dbo.Delivery as d 
+
+INNER JOIN dbo.SubOrder AS s ON s.suborder_id= d.suborder_id
+    INNER JOIN dbo.Business as b on b.business_id= s.business_id
+    WHERE d.rider_id=@rider_id AND s.status IN ('Delivered', 'Cancelled') 
+    AND CAST(d.assigned_at AS date) BETWEEN @from_date AND @to_date);
+    GO
+
+-- 4.8.a - Search_Platform (placeholder)
+
+-- 4.8.b - Reconcile_Order_Totals (placeholder)
+
+-- 4.8.c - Nearby_Businesses_By_Category (placeholder)
+
+-- 4.8.d - Platform_Health_Snapshot (placeholder)
+
